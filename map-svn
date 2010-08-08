@@ -47,7 +47,7 @@ list_missing_revs() {
     [ -f revisions ] || $0
     [ -f svn.revisions ] || make_svn_log_revisions | sort -n >svn.revisions
     echo "Printing missing revs" 1>&2
-    for rev in `cut -d' ' -f1 revisions | sort -n | comm -32 svn.revisions - `; do
+    for rev in `cut -d' ' -f1 revisions | sort -n | comm --nocheck-order -32 svn.revisions - `; do
         echo $rev `grep -E "^r$rev" ~/svn-full.log -A2 | tail -1`
     done
 }

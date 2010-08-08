@@ -2,12 +2,12 @@ Creates a mapping between SVN revisions and git's imported commit hashes.
 
 To run, use:
   cd $GIT_DIR
-  ./map-svn
+  map-svn
 This will output a map between SVN and git by parsing git's commit descriptions.
 
 You can also check for missing revisions in your revision map by providing a local SVN repo directory.
   cd $GIT_DIR
-  ./map-svn missing $SVN_DIR
+  map-svn missing $SVN_DIR
 
 revisions.missing will contain any revisions that were in SVN, but weren't mapped to a git commit.
 

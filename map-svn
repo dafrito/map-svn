@@ -22,7 +22,7 @@ load() {
         missing) 
             [ -d "$*" ] || die "A valid SVN directory must be provided"
             SVN_DIR="$*"
-            list_missing_revs ;;
+            list_missing_revs >revisions.missing ;;
         clean) rm -f revisions.missing svn.revisions revisions ;;
         *) usage 1>&2; exit 1 ;;
     esac

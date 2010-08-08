@@ -1,0 +1,22 @@
+Creates a mapping between SVN revisions and git's imported commit hashes. 
+
+To run, use:
+  cd $GIT_DIR
+  ./map-svn
+This will output a map between SVN and git by parsing git's commit descriptions.
+
+You can also check for missing revisions in your revision map by providing a local SVN repo directory.
+  cd $GIT_DIR
+  ./map-svn missing $SVN_DIR
+
+revisions.missing will contain any revisions that were in SVN, but weren't mapped to a git commit.
+
+You can have missing commits for the following reasons:
+
+ - Commits on deleted branches. git ignores deleted branches, so any commits involving them will not show up.
+ - Null commits. Commits that don't have any changes that were relevant to git are ignored. SVN properties, empty directories, or cvs2svn-related commits.
+ - Incomplete SVN repository. These won't actually show up, but it's worth pointing out: A SVN repository at a
+ subdir will only have a subset of the total revisions for that repo, so if git-svn clone was ran against a 
+ different directory, git may contain unmatched commits.
+
+Ideally, if SVN_DIR points to trunk and your git svn clone is up-to-date, you should have no missing commits. 

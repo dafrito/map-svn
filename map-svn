@@ -1,0 +1,59 @@
+#!/bin/sh
+PATH=/bin:/usr/bin
+
+usage() {
+    echo "map-svn [map|missing|clean]"
+    echo "map                   Map a git repo to its SVN revisions"
+    echo "missing               List all missing SVN revisions from the revision map"
+    echo "clean                 Remove created files"
+}
+
+load() {
+    if [ ! -n "$1" ]; then
+        ./map-svn map
+        exit
+    fi
+    cmd=$1
+    shift
+    case "$cmd" in
+        help) usage ;;
+        map) make_map ;;
+        missing) 
+            [ -d "$*" ] || die "A valid SVN directory must be provided"
+            SVN_DIR="$*"
+            list_missing_revs ;;
+        clean) rm -f revisions.missing svn.revisions revisions ;;
+        *) usage; exit 1 ;;
+    esac
+}
+
+make_map() {
+    [ -d .git ] || die "Must be used in a git repo."
+    echo "Creating SVN-to-git map" 1>&2
+    IFS='
+    '
+    for commit in `git rev-list --all`; do
+        git show --format='format:%B' --quiet $commit | sed -nre 's#^\s*git-svn-id: [^@]+@([0-9]+).*#\1 '$commit'#p'
+    done
+}
+
+make_svn_log_revisions() {
+    echo "Dumping SVN log numbers" 1>&2
+    cd $SVN_DIR && svn log | sed -nre 's/^r([0-9]+) \|.*/\1/p'
+}
+
+list_missing_revs() {
+    [ -f revisions ] || ./map-svn map | sort -n >revisions
+    [ -f svn.revisions ] || ./map-svn svn-log | sort -n >svn.revisions
+    echo "Printing missing revs" 1>&2
+    for rev in `cut -d' ' -f1 revisions | comm -32 svn.revisions - `; do
+        echo $rev `grep -E "^r$rev" ~/svn-full.log -A2 | tail -1`
+    done
+}
+
+die() {
+    echo $* 1>&2
+    exit 1
+}
+
+load $*

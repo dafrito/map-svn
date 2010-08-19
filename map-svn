@@ -34,7 +34,7 @@ make_map() {
     IFS='
     '
     for commit in `git rev-list --all`; do
-        git show --format='format:%B' --quiet $commit | sed -nre 's#^\s*git-svn-id: [^@]+@([0-9]+).*#\1 '$commit'#p'
+        git show --format='format:%b' --quiet $commit | sed -nre 's#^\s*git-svn-id: [^@]+@([0-9]+).*#\1 '$commit'#p'
     done
 }
 

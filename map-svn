@@ -8,4 +8,4 @@ die() {
 
 PARROT_HOME=$*
 [ -d $PARROT_HOME/.git/svn ] || die "$PARROT_HOME is not a git-svn repo"
-find $PARROT_HOME/.git/svn/refs/remotes/svn/* -name '.rev_map*' | xargs ./parse.pl | sort -n
+find $PARROT_HOME/.git/svn/refs/remotes/svn/* -name '.rev_map*' | xargs `dirname $0`/parse.pl | sort -n
